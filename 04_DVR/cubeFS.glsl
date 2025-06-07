@@ -41,12 +41,11 @@ void main() {
   vec3 currentPoint = entryPoint;
   result = vec4(0.0);
   do {
-    // TODO: Implement raycaster and store the result in "result".
-    //       The next two lines are placeholder code ensuring all
-    //       variables are utilized. This prevents exceptions from
-    //       the initial shader. These placeholder lines should be
-    //       replaced by the raycasting code.
-    result = 1+transferFunction(texture(volume,delta).r);
-    break;
+    float scaleValue = texture(volume, currentPoint).r;
+    vec4 colorValue = transferFunction(scaleValue);
+    colorValue.a = 1.0 - pow(1.0 - colorValue.a, opacityCorrection);
+    result = under(colorValue, result);
+    if (result.a > 0.95) break;
+    currentPoint += delta;
   } while (inBounds(currentPoint));
 }
